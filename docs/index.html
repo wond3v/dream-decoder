@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌙 Dream Decoder 解梦大师</title>
+    <title>🌙 Dream Decoder 解梦大师 — 深度版</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -19,16 +15,9 @@
             color: #e8e8e8;
         }
         
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         
-        header {
-            text-align: center;
-            padding: 40px 0;
-        }
+        header { text-align: center; padding: 40px 0; }
         
         h1 {
             font-size: 2.5rem;
@@ -39,9 +28,14 @@
             background-clip: text;
         }
         
-        .subtitle {
-            color: #888;
-            font-size: 1rem;
+        .subtitle { color: #888; font-size: 1rem; }
+        .badge { 
+            display: inline-block;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
         }
         
         .search-box {
@@ -52,56 +46,55 @@
             backdrop-filter: blur(10px);
         }
         
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 10px;
-            color: #e8e8e8;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .tab:hover, .tab.active {
-            background: rgba(249, 212, 35, 0.3);
-        }
-        
-        input[type="text"], textarea {
+        textarea {
             width: 100%;
-            padding: 15px 20px;
+            padding: 20px;
             border: 2px solid rgba(255,255,255,0.2);
             border-radius: 15px;
             background: rgba(0,0,0,0.3);
             color: #fff;
             font-size: 1.1rem;
             outline: none;
+            min-height: 120px;
+            resize: vertical;
             transition: border-color 0.3s;
         }
         
-        input[type="text"]:focus, textarea:focus {
-            border-color: #f9d423;
+        textarea:focus { border-color: #f9d423; }
+        textarea::placeholder { color: #666; }
+        
+        .context-questions {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
         }
         
-        textarea {
-            min-height: 100px;
-            resize: vertical;
+        .context-questions label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #aaa;
+        }
+        
+        .context-questions select, .context-questions input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 1rem;
         }
         
         button.primary {
             width: 100%;
-            padding: 15px;
-            margin-top: 15px;
+            padding: 18px;
+            margin-top: 20px;
             background: linear-gradient(90deg, #f9d423, #ff4e50);
             border: none;
             border-radius: 15px;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
@@ -118,6 +111,7 @@
             padding: 30px;
             margin-top: 20px;
             display: none;
+            line-height: 1.8;
         }
         
         .result.show {
@@ -130,90 +124,72 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .symbol-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
-        }
-        
-        .symbol-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .symbol-name {
+        .result h2 {
+            color: #f9d423;
+            margin-bottom: 20px;
             font-size: 1.5rem;
-            font-weight: bold;
         }
         
-        .fortune {
+        .result h3 {
+            color: #fff;
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .narrative {
+            background: rgba(249, 212, 35, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #f9d423;
+            font-size: 1.1rem;
+        }
+        
+        .symbol-tag {
+            display: inline-block;
             padding: 5px 15px;
+            margin: 5px;
+            background: rgba(255,255,255,0.1);
             border-radius: 20px;
             font-size: 0.9rem;
         }
         
-        .fortune.great { background: linear-gradient(90deg, #f9d423, #ff4e50); }
-        .fortune.good { background: rgba(76, 175, 80, 0.5); }
-        .fortune.neutral { background: rgba(158, 158, 158, 0.5); }
-        .fortune.caution { background: rgba(255, 152, 0, 0.5); }
-        .fortune.mixed { background: rgba(156, 39, 176, 0.5); }
+        .symbol-tag.great { background: rgba(249, 212, 35, 0.3); }
+        .symbol-tag.good { background: rgba(76, 175, 80, 0.3); }
+        .symbol-tag.caution { background: rgba(255, 152, 0, 0.3); }
         
-        .interpretation {
-            margin: 10px 0;
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px;
-            border-left: 3px solid #f9d423;
-        }
-        
-        .interpretation h4 {
-            color: #f9d423;
-            margin-bottom: 8px;
-        }
-        
-        .overall {
-            text-align: center;
+        .advice-box {
+            background: rgba(102, 126, 234, 0.2);
             padding: 20px;
-            background: rgba(249, 212, 35, 0.1);
             border-radius: 15px;
-            margin-top: 20px;
+            margin: 20px 0;
         }
         
-        .overall h3 {
-            font-size: 1.3rem;
+        .advice-box h4 {
+            color: #667eea;
             margin-bottom: 10px;
         }
         
-        .symbols-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .symbol-btn {
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 10px;
-            color: #e8e8e8;
-            cursor: pointer;
-            transition: all 0.3s;
+        .fortune-banner {
             text-align: center;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 15px;
+            font-size: 1.3rem;
         }
         
-        .symbol-btn:hover {
-            background: rgba(249, 212, 35, 0.3);
-            transform: scale(1.05);
+        .fortune-banner.great {
+            background: linear-gradient(135deg, rgba(249,212,35,0.3), rgba(255,78,80,0.3));
         }
-        
-        .symbol-btn .emoji {
-            font-size: 1.5rem;
-            display: block;
-            margin-bottom: 5px;
+        .fortune-banner.good {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        .fortune-banner.neutral {
+            background: rgba(158, 158, 158, 0.2);
+        }
+        .fortune-banner.caution {
+            background: rgba(255, 152, 0, 0.2);
         }
         
         footer {
@@ -222,27 +198,28 @@
             color: #666;
         }
         
-        footer a {
-            color: #f9d423;
-            text-decoration: none;
+        footer a { color: #f9d423; text-decoration: none; }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
         }
         
-        .tip {
-            background: rgba(249, 212, 35, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            font-size: 0.9rem;
+        .loading::after {
+            content: "🌙";
+            animation: pulse 1s infinite;
+            font-size: 3rem;
+            display: block;
         }
         
-        .tip::before {
-            content: "💡 ";
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
         @media (max-width: 600px) {
             h1 { font-size: 1.8rem; }
-            .tabs { flex-wrap: wrap; }
-            .tab { flex: 1; text-align: center; min-width: 80px; }
+            .container { padding: 15px; }
         }
     </style>
 </head>
@@ -250,374 +227,493 @@
     <div class="container">
         <header>
             <h1>🌙 Dream Decoder 解梦大师</h1>
-            <p class="subtitle">周公解梦 × 现代心理学</p>
+            <p class="subtitle">周公解梦 × 现代心理学 × 深度分析</p>
+            <span class="badge">✨ 深度版 Deep Analysis</span>
         </header>
         
         <div class="search-box">
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('interpret')">🔮 解梦</button>
-                <button class="tab" onclick="switchTab('lookup')">🔍 查符号</button>
-                <button class="tab" onclick="switchTab('random')">🎲 随机</button>
-                <button class="tab" onclick="switchTab('list')">📚 符号表</button>
+            <textarea id="dream-input" placeholder="详细描述你的梦境...&#10;&#10;越详细越好！包括：场景、人物、情绪、颜色、发生了什么事...&#10;&#10;例如：我梦到在一片大海上飞翔，看到远处有一条金色的龙在云中穿梭。我感到既兴奋又有点害怕，最后龙向我点了点头就消失了。"></textarea>
+            
+            <div class="context-questions">
+                <label>📅 最近的生活状态</label>
+                <select id="life-status">
+                    <option value="">请选择（可选）</option>
+                    <option value="stressed">压力较大 / 焦虑</option>
+                    <option value="peaceful">平静安稳</option>
+                    <option value="transition">正在经历变化 / 转折期</option>
+                    <option value="happy">开心顺利</option>
+                    <option value="confused">迷茫困惑</option>
+                    <option value="romantic">感情相关</option>
+                </select>
+                
+                <label>🎯 最近关心的事情</label>
+                <input type="text" id="concern" placeholder="如：工作升职、感情、健康、家人...（可选）">
             </div>
             
-            <div id="interpret-panel">
-                <textarea id="dream-input" placeholder="描述你的梦境... (中英文皆可)&#10;例如：我梦到在天上飞，看到了龙"></textarea>
-                <button class="primary" onclick="interpretDream()">🔮 解梦</button>
-            </div>
-            
-            <div id="lookup-panel" style="display:none">
-                <input type="text" id="symbol-input" placeholder="输入符号 (如: 蛇, snake, 棺材, flying)">
-                <button class="primary" onclick="lookupSymbol()">🔍 查询</button>
-            </div>
-            
-            <div id="random-panel" style="display:none">
-                <button class="primary" onclick="randomSymbol()">🎲 随机解梦智慧</button>
-            </div>
-            
-            <div id="list-panel" style="display:none">
-                <div class="symbols-grid" id="symbols-grid"></div>
-            </div>
+            <button class="primary" onclick="deepInterpret()">🔮 深度解梦</button>
         </div>
         
         <div class="result" id="result"></div>
         
         <footer>
             Made with 💜 by <a href="https://github.com/wond3v/dream-decoder">旺旺 (Nova)</a> 🐕
-            <br><small>⚠️ 仅供娱乐参考</small>
+            <br><small>⚠️ 仅供娱乐参考，重要决定请理性思考</small>
         </footer>
     </div>
 
     <script>
-        // Dream Symbols Database
+        // Enhanced Dream Symbols Database
         const SYMBOLS = {
-            "蛇": {
-                en: "snake", emoji: "🐍", category: "动物",
-                traditional: "蛇为小龙，梦蛇多主财运、智慧。被蛇咬则可能有小人。",
-                modern: "May represent hidden fears, transformation, or temptation.",
-                fortune: "mixed", fortuneText: "吉凶参半",
-                keywords: ["snake", "serpent", "蛇"]
+            // === 动物 ===
+            "蛇": { en: "snake", emoji: "🐍", category: "动物", fortune: "mixed",
+                meanings: ["财运", "智慧", "隐藏的恐惧", "转变", "诱惑"],
+                positive: "蛇是小龙的象征，代表智慧和潜在的财运。梦中的蛇如果是平静的，往往预示好运。",
+                negative: "被蛇咬或蛇攻击可能暗示有小人或隐藏的威胁需要警惕。",
+                psychology: "蛇在心理学中常代表被压抑的欲望、恐惧或即将到来的转变。",
+                advice: "留意身边是否有需要警惕的人或事，同时也可能是内心在提醒你面对某些恐惧。"
             },
-            "狗": {
-                en: "dog", emoji: "🐕", category: "动物",
-                traditional: "狗为忠诚之兽，梦狗主朋友、忠诚。狗咬人则可能有口舌之争。",
-                modern: "Represents loyalty, friendship, or protection instincts.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["dog", "puppy", "狗", "犬"]
+            "龙": { en: "dragon", emoji: "🐉", category: "动物", fortune: "great",
+                meanings: ["权力", "成功", "贵人", "腾飞", "保护"],
+                positive: "龙是最吉祥的梦境符号之一！代表事业腾飞、贵人相助、大展宏图。",
+                negative: "极少有负面含义。如果龙在攻击你，可能暗示你正在与强大的力量抗争。",
+                psychology: "龙象征着内心深处的力量和潜能，梦见龙说明你的潜意识在告诉你：你比想象中更强大。",
+                advice: "这是行动的好时机！有什么一直想做的事情，现在就去做。贵人运很旺。"
             },
-            "龙": {
-                en: "dragon", emoji: "🐉", category: "动物",
-                traditional: "龙为帝王之象，大吉！主事业腾飞、贵人相助。",
-                modern: "Symbol of power, success, and ambition.",
-                fortune: "great", fortuneText: "大吉",
-                keywords: ["dragon", "龙"]
+            "狗": { en: "dog", emoji: "🐕", category: "动物", fortune: "good",
+                meanings: ["忠诚", "友情", "保护", "直觉"],
+                positive: "狗代表忠诚的朋友和真诚的关系。梦见友善的狗预示着可靠的人际关系。",
+                negative: "狗咬人可能暗示与朋友或身边人有口舌之争。",
+                psychology: "狗象征着你内心对忠诚和陪伴的渴望，也可能代表你自己忠诚的一面。",
+                advice: "珍惜身边真诚的朋友，他们是你的财富。"
             },
-            "猫": {
-                en: "cat", emoji: "🐱", category: "动物",
-                traditional: "猫主独立、神秘。梦猫可能有女性贵人，或需防小人。",
-                modern: "Independence, intuition, feminine energy.",
-                fortune: "neutral", fortuneText: "中",
-                keywords: ["cat", "kitten", "猫"]
+            "猫": { en: "cat", emoji: "🐱", category: "动物", fortune: "neutral",
+                meanings: ["独立", "神秘", "直觉", "女性能量"],
+                positive: "猫代表独立和神秘的力量，可能有女性贵人出现。",
+                negative: "黑猫或凶猫可能暗示需要防范小人或虚伪的人。",
+                psychology: "猫象征着独立、直觉和神秘感，反映了你内心自由的一面。",
+                advice: "相信自己的直觉，保持独立思考。"
             },
-            "鱼": {
-                en: "fish", emoji: "🐟", category: "动物",
-                traditional: "鱼通'余'，年年有余！梦鱼主财运、富足。",
-                modern: "Abundance, fertility, the unconscious mind.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["fish", "鱼"]
+            "鱼": { en: "fish", emoji: "🐟", category: "动物", fortune: "good",
+                meanings: ["财富", "富足", "年年有余", "机遇"],
+                positive: "鱼通"余"，年年有余！梦见鱼是财运和丰收的象征。",
+                negative: "鱼死了可能暗示某个机会可能会失去。",
+                psychology: "鱼在水中游动象征着潜意识的流动和情感的丰富。",
+                advice: "财运不错，可以关注投资理财的机会。"
             },
-            "鸟": {
-                en: "bird", emoji: "🐦", category: "动物",
-                traditional: "鸟主自由、消息。梦鸟飞主好消息将至。",
-                modern: "Freedom, perspective, messages from the subconscious.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["bird", "鸟"]
+            "鸟": { en: "bird", emoji: "🐦", category: "动物", fortune: "good",
+                meanings: ["自由", "消息", "希望", "灵魂"],
+                positive: "鸟飞翔代表自由和好消息即将到来。",
+                negative: "鸟受伤或死亡可能暗示希望受挫。",
+                psychology: "鸟象征着灵魂的自由和对更高境界的追求。",
+                advice: "保持乐观，好消息可能很快就会到来。"
             },
-            "水": {
-                en: "water", emoji: "💧", category: "自然",
-                traditional: "水主财。清水为财运，浑水需谨慎。大水/洪水主大变动。",
-                modern: "Emotions, the unconscious, cleansing or overwhelm.",
-                fortune: "mixed", fortuneText: "视情况",
-                keywords: ["water", "river", "ocean", "水", "河", "海"]
+            
+            // === 自然 ===
+            "水": { en: "water", emoji: "💧", category: "自然", fortune: "mixed",
+                meanings: ["情感", "财运", "潜意识", "变化"],
+                positive: "清澈的水代表财运和清晰的思绪。平静的水面象征内心的平和。",
+                negative: "浑水或洪水可能暗示情绪的波动或生活的变动。",
+                psychology: "水是潜意识最常见的象征，水的状态反映了你当前的情绪状态。",
+                advice: "注意管理自己的情绪，顺其自然往往比强求更好。"
             },
-            "火": {
-                en: "fire", emoji: "🔥", category: "自然",
-                traditional: "火主兴旺。梦火烧主事业红火，但需防冲动。",
-                modern: "Passion, transformation, anger, or creativity.",
-                fortune: "mixed", fortuneText: "吉凶参半",
-                keywords: ["fire", "flame", "火", "焰"]
+            "火": { en: "fire", emoji: "🔥", category: "自然", fortune: "mixed",
+                meanings: ["激情", "愤怒", "转变", "兴旺"],
+                positive: "火焰熊熊代表事业红火、激情满满。",
+                negative: "失控的火可能暗示愤怒或需要控制的情绪。",
+                psychology: "火象征着内心的激情和能量，也可能是被压抑的愤怒。",
+                advice: "将激情用在正确的地方，避免冲动行事。"
             },
-            "山": {
-                en: "mountain", emoji: "⛰️", category: "自然",
-                traditional: "山主稳重、障碍。爬山成功主克服困难。",
-                modern: "Challenges, goals, stability, obstacles to overcome.",
-                fortune: "neutral", fortuneText: "中",
-                keywords: ["mountain", "hill", "山"]
+            "海": { en: "ocean", emoji: "🌊", category: "自然", fortune: "neutral",
+                meanings: ["广阔", "潜意识", "母性", "未知"],
+                positive: "平静的大海代表广阔的前景和内心的宁静。",
+                negative: "波涛汹涌可能暗示内心的动荡或面临的挑战。",
+                psychology: "海洋是最深层潜意识的象征，代表着无限的可能性和未知。",
+                advice: "接受生活的不确定性，像大海一样包容一切。"
             },
-            "雨": {
-                en: "rain", emoji: "🌧️", category: "自然",
-                traditional: "雨主恩泽、润泽。梦雨多为吉兆，滋润万物。",
-                modern: "Cleansing, renewal, sadness, or fertility.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["rain", "雨"]
+            "山": { en: "mountain", emoji: "⛰️", category: "自然", fortune: "neutral",
+                meanings: ["障碍", "目标", "稳定", "挑战"],
+                positive: "登上山顶代表克服困难、达成目标。",
+                negative: "无法攀登可能暗示当前面临的挑战很大。",
+                psychology: "山象征着人生的目标和需要克服的障碍。",
+                advice: "一步一个脚印，再高的山也能登顶。"
             },
-            "死人": {
-                en: "dead person", emoji: "💀", category: "人物",
-                traditional: "梦见死人反为吉！主长寿、旧事了结。死去的亲人托梦要注意。",
-                modern: "Endings, transformation, unresolved feelings about the person.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["dead", "death", "deceased", "死", "亡"]
+            "雨": { en: "rain", emoji: "🌧️", category: "自然", fortune: "good",
+                meanings: ["恩泽", "净化", "情绪释放", "新生"],
+                positive: "雨水滋润万物，代表恩泽和祝福降临。",
+                negative: "暴雨可能暗示情绪需要释放。",
+                psychology: "雨象征着情绪的释放和内心的净化。",
+                advice: "让情绪自然流动，哭泣也是一种释放。"
             },
-            "婴儿": {
-                en: "baby", emoji: "👶", category: "人物",
-                traditional: "婴儿主新生、希望。梦婴儿主新开始或好消息。",
-                modern: "New beginnings, innocence, vulnerability, new projects.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["baby", "infant", "婴儿", "宝宝"]
+            
+            // === 动作 ===
+            "飞": { en: "flying", emoji: "🕊️", category: "动作", fortune: "good",
+                meanings: ["自由", "超越", "野心", "逃避"],
+                positive: "飞翔代表突破限制、自由自在，预示着事业或生活的上升。",
+                negative: "害怕飞翔或无法控制可能暗示对某些事情失去控制感。",
+                psychology: "飞翔是最常见的积极梦境之一，反映了对自由和超越的渴望。",
+                advice: "你有能力飞得更高！不要给自己设限。"
             },
-            "棺材": {
-                en: "coffin", emoji: "⚰️", category: "物品",
-                traditional: "大吉！棺材 = 官财（升官发财）。棺材入宅主财运进门。",
-                modern: "Endings leading to new beginnings, transformation.",
-                fortune: "great", fortuneText: "大吉",
-                keywords: ["coffin", "棺材", "棺"]
+            "掉落": { en: "falling", emoji: "⬇️", category: "动作", fortune: "caution",
+                meanings: ["失控", "焦虑", "恐惧", "放手"],
+                positive: "安全落地代表能够应对困难。",
+                negative: "不断坠落可能反映了生活中的失控感或焦虑。",
+                psychology: "坠落梦通常与焦虑和压力有关，是最常见的焦虑梦境之一。",
+                advice: "关注什么让你感到失控，尝试在生活中找回掌控感。"
             },
-            "钱": {
-                en: "money", emoji: "💰", category: "物品",
-                traditional: "梦钱不一定主财。捡钱可能漏财，丢钱反而可能得财。",
-                modern: "Self-worth, power, anxiety about resources.",
-                fortune: "mixed", fortuneText: "视情况",
-                keywords: ["money", "cash", "钱", "金钱"]
+            "掉牙": { en: "losing teeth", emoji: "🦷", category: "动作", fortune: "caution",
+                meanings: ["焦虑", "变化", "成长", "失去"],
+                positive: "传统认为可能预示着蜕变和成长。",
+                negative: "可能暗示对外表或衰老的焦虑，也传统认为要注意家人健康。",
+                psychology: "掉牙梦是最常见的焦虑梦之一，通常与自我形象或重大生活变化有关。",
+                advice: "不必过于担心，但可以关心一下家人的身体状况。"
             },
-            "房子": {
-                en: "house", emoji: "🏠", category: "物品",
-                traditional: "房子主自身。新房主新生活，旧房主怀旧或需改变。",
-                modern: "The self, security, family, different rooms = different aspects of psyche.",
-                fortune: "neutral", fortuneText: "中",
-                keywords: ["house", "home", "房子", "房", "屋"]
+            "哭": { en: "crying", emoji: "😢", category: "动作", fortune: "good",
+                meanings: ["释放", "喜悦", "情绪宣泄"],
+                positive: "周公解梦说：梦哭反主喜！哭得越厉害，喜事越大。",
+                negative: "也可能是潜意识在帮你释放压抑的情绪。",
+                psychology: "哭泣梦往往是情绪释放的表现，醒来后可能会感到轻松。",
+                advice: "好事可能要来了！同时也要适当释放现实中的情绪。"
             },
-            "车": {
-                en: "car", emoji: "🚗", category: "物品",
-                traditional: "车主前进、事业。开车顺利主事业顺遂。",
-                modern: "Life direction, control, ambition, journey.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["car", "vehicle", "车"]
+            "追逐": { en: "being chased", emoji: "🏃", category: "动作", fortune: "caution",
+                meanings: ["逃避", "压力", "恐惧", "挑战"],
+                positive: "成功逃脱代表能够应对挑战。",
+                negative: "不断被追可能反映了逃避某些问题。",
+                psychology: "被追逐是最常见的梦境之一，通常代表着你在逃避某些事情。",
+                advice: "思考你在逃避什么，面对它可能比逃避更有效。"
             },
-            "飞": {
-                en: "flying", emoji: "🕊️", category: "动作",
-                traditional: "飞主高升、自由。飞得高主志向远大，但需防骄傲。",
-                modern: "Freedom, escape, ambition, transcending limitations.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["fly", "flying", "飞", "飞翔"]
+            "考试": { en: "exam", emoji: "📝", category: "动作", fortune: "neutral",
+                meanings: ["被评判", "压力", "自我怀疑", "准备"],
+                positive: "考得好代表自信和准备充分。",
+                negative: "考砸或迟到可能反映了对评判的恐惧。",
+                psychology: "考试梦通常与自我评价和"冒充者综合症"有关。",
+                advice: "相信自己的能力，你比想象中更有准备。"
             },
-            "掉牙": {
-                en: "losing teeth", emoji: "🦷", category: "动作",
-                traditional: "传统认为掉牙主亲人健康需注意。但也可能主蜕变。",
-                modern: "Anxiety about appearance, aging, loss of control, major life changes.",
-                fortune: "caution", fortuneText: "需注意",
-                keywords: ["teeth", "losing teeth", "tooth", "掉牙", "牙"]
+            "结婚": { en: "wedding", emoji: "💒", category: "动作", fortune: "good",
+                meanings: ["承诺", "新阶段", "合一", "重大决定"],
+                positive: "结婚代表人生进入新阶段，未婚者可能有姻缘。",
+                negative: "婚礼出问题可能暗示对承诺的担忧。",
+                psychology: "婚姻梦象征着不同方面自我的整合，或对承诺的思考。",
+                advice: "可能是时候做出某个重要的承诺或决定了。"
             },
-            "哭": {
-                en: "crying", emoji: "😢", category: "动作",
-                traditional: "梦哭反主喜！哭得越厉害，喜事越大。",
-                modern: "Emotional release, sadness, or joy in disguise.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["cry", "crying", "tears", "哭", "泪"]
+            "怀孕": { en: "pregnancy", emoji: "🤰", category: "动作", fortune: "good",
+                meanings: ["新生", "创意", "成长", "期待"],
+                positive: "怀孕象征着新事物的诞生，可能有新计划或创意。",
+                negative: "担心怀孕可能反映对新责任的焦虑。",
+                psychology: "怀孕梦不一定与真正的怀孕有关，更多代表创造力和新开始。",
+                advice: "可能有新的想法或项目在酝酿，好好培育它。"
             },
-            "结婚": {
-                en: "wedding", emoji: "💒", category: "动作",
-                traditional: "梦结婚主人生新阶段、承诺。未婚者梦此可能有姻缘。",
-                modern: "Commitment, union of different aspects of self, new phase.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["wedding", "marriage", "marry", "结婚", "婚礼"]
+            
+            // === 物品 ===
+            "棺材": { en: "coffin", emoji: "⚰️", category: "物品", fortune: "great",
+                meanings: ["升官", "发财", "转变", "结束"],
+                positive: "大吉！棺材谐音"官财"，代表升官发财。棺材入宅主财运进门！",
+                negative: "在周公解梦中几乎没有负面含义。",
+                psychology: "棺材象征着结束和转变，可能暗示某个人生阶段的结束。",
+                advice: "好运来了！可以关注事业和财运方面的机会。"
             },
-            "怀孕": {
-                en: "pregnancy", emoji: "🤰", category: "动作",
-                traditional: "怀孕主新生、创造。可能有新计划或创意。",
-                modern: "Creativity, new ideas, development, anticipation.",
-                fortune: "good", fortuneText: "吉",
-                keywords: ["pregnant", "pregnancy", "怀孕"]
+            "死人": { en: "deceased", emoji: "💀", category: "物品", fortune: "good",
+                meanings: ["长寿", "结束", "转变", "思念"],
+                positive: "梦见死人反为吉！主长寿、旧事了结。",
+                negative: "去世的亲人托梦要认真对待，可能是思念或未完的心事。",
+                psychology: "死亡梦通常象征着某种结束或转变，而非真正的死亡。",
+                advice: "不必害怕，这往往预示着好事。如果是亲人，可以去祭拜一下。"
             },
-            "考试": {
-                en: "exam", emoji: "📝", category: "动作",
-                traditional: "考试主被评判、压力。考得好主顺利，考砸需自省。",
-                modern: "Fear of judgment, self-evaluation, imposter syndrome.",
-                fortune: "neutral", fortuneText: "中",
-                keywords: ["exam", "test", "考试", "测试"]
+            "钱": { en: "money", emoji: "💰", category: "物品", fortune: "mixed",
+                meanings: ["价值", "自我价值", "资源", "焦虑"],
+                positive: "发财梦！但要注意：捡钱可能漏财，丢钱反而可能得财。",
+                negative: "对钱的焦虑可能反映了对资源或自我价值的担忧。",
+                psychology: "金钱在梦中通常象征着自我价值感和资源。",
+                advice: "关注你与金钱的关系，但不要被它控制。"
+            },
+            "房子": { en: "house", emoji: "🏠", category: "物品", fortune: "neutral",
+                meanings: ["自我", "安全", "家庭", "内心"],
+                positive: "新房代表新生活，房子状态好代表内心状态好。",
+                negative: "破旧的房子可能暗示需要关注内心或生活状态。",
+                psychology: "房子是自我的象征，不同的房间代表不同的心理层面。",
+                advice: "关注梦中房子的状态，它反映了你当前的内心世界。"
+            },
+            "镜子": { en: "mirror", emoji: "🪞", category: "物品", fortune: "neutral",
+                meanings: ["自省", "真相", "自我认知"],
+                positive: "清晰的镜子代表自我认知清晰。",
+                negative: "破碎或模糊的镜子可能暗示自我认知的困惑。",
+                psychology: "镜子是自我反思的象征，镜中的形象代表你对自己的看法。",
+                advice: "花时间了解真正的自己。"
+            },
+            "车": { en: "car", emoji: "🚗", category: "物品", fortune: "good",
+                meanings: ["方向", "控制", "人生旅途", "事业"],
+                positive: "顺利开车代表人生在正轨，事业顺遂。",
+                negative: "失控或迷路可能暗示人生方向需要调整。",
+                psychology: "车代表你对人生方向的控制感。",
+                advice: "你是自己人生的司机，掌握好方向盘。"
             }
         };
 
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('[id$="-panel"]').forEach(p => p.style.display = 'none');
-            
-            event.target.classList.add('active');
-            document.getElementById(tab + '-panel').style.display = 'block';
-            document.getElementById('result').classList.remove('show');
-            
-            if (tab === 'list') {
-                renderSymbolsList();
-            }
-        }
+        // Combination interpretations
+        const COMBINATIONS = {
+            "龙+飞": "绝佳组合！龙飞九天，预示事业即将腾飞，有重大突破。",
+            "龙+水": "龙入大海，如鱼得水。你即将进入一个让你大展才华的环境。",
+            "水+鱼": "财运亨通！水中有鱼，年年有余，财源滚滚。",
+            "死人+棺材": "双重大吉！这个组合在周公解梦中是非常吉利的，预示着财运和好运。",
+            "飞+鸟": "自由的象征加倍，说明你内心对自由的渴望很强烈，好消息将至。",
+            "火+龙": "火龙腾空，气势如虹！事业运势极佳，可能有重大成功。",
+            "蛇+水": "蛇水相遇，主财运。但也要小心暗中的竞争对手。",
+            "哭+死人": "看似悲伤，实则大喜。可能有意想不到的好事发生。",
+            "追逐+掉落": "压力信号。你的潜意识在告诉你需要放松，面对而不是逃避。",
+            "房子+水": "注意家中事务，可能有财运进门，也可能需要关注家人情绪。",
+            "婴儿+怀孕": "新生力量！新的开始、新的创意、新的人生阶段即将到来。"
+        };
 
-        function searchSymbol(query) {
-            query = query.toLowerCase().trim();
-            const results = [];
-            
-            for (const [key, data] of Object.entries(SYMBOLS)) {
-                const keywords = data.keywords.map(k => k.toLowerCase());
-                if (keywords.includes(query) || key.toLowerCase() === query || data.en.toLowerCase() === query) {
-                    results.push([key, data]);
-                }
+        // Life status context
+        const LIFE_CONTEXT = {
+            "stressed": "考虑到你最近压力较大，这个梦可能是潜意识在帮你释放压力和焦虑。",
+            "peaceful": "在平静的生活状态下做这个梦，它的预示意义可能更加明显。",
+            "transition": "正处于人生转折期的你，这个梦可能在指引你未来的方向。",
+            "happy": "在顺利的生活中做这个梦，可能是在提醒你珍惜当下或预示更好的事情。",
+            "confused": "这个梦可能在帮助你的潜意识整理思绪，找到方向。",
+            "romantic": "梦境可能与你的感情生活有关，注意其中的情感信号。"
+        };
+
+        function deepInterpret() {
+            const dreamText = document.getElementById('dream-input').value.trim();
+            if (!dreamText) {
+                alert('请描述你的梦境～');
+                return;
             }
             
-            if (results.length === 0) {
-                for (const [key, data] of Object.entries(SYMBOLS)) {
-                    const keywordStr = data.keywords.join(' ').toLowerCase();
-                    if (keywordStr.includes(query) || key.includes(query) || data.en.toLowerCase().includes(query)) {
-                        results.push([key, data]);
-                    }
-                }
-            }
+            const lifeStatus = document.getElementById('life-status').value;
+            const concern = document.getElementById('concern').value.trim();
             
-            return results;
-        }
-
-        function renderSymbolCard(key, data) {
-            return `
-                <div class="symbol-card">
-                    <div class="symbol-header">
-                        <span class="symbol-name">${data.emoji} ${key} (${data.en})</span>
-                        <span class="fortune ${data.fortune}">${data.fortuneText}</span>
-                    </div>
-                    <div class="interpretation">
-                        <h4>📜 周公解梦</h4>
-                        <p>${data.traditional}</p>
-                    </div>
-                    <div class="interpretation">
-                        <h4>🧠 现代解读</h4>
-                        <p>${data.modern}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function lookupSymbol() {
-            const query = document.getElementById('symbol-input').value;
-            if (!query) return;
-            
-            const results = searchSymbol(query);
             const resultDiv = document.getElementById('result');
-            
-            if (results.length === 0) {
-                resultDiv.innerHTML = `
-                    <h3>❌ 未找到「${query}」</h3>
-                    <p>试试: 蛇, 狗, 水, 飞, 棺材, snake, flying, etc.</p>
-                `;
-            } else {
-                resultDiv.innerHTML = results.map(([k, d]) => renderSymbolCard(k, d)).join('');
-            }
-            
+            resultDiv.innerHTML = '<div class="loading"><p>正在深度分析你的梦境...</p></div>';
             resultDiv.classList.add('show');
+            
+            // Simulate analysis delay for effect
+            setTimeout(() => {
+                const analysis = analyzeDream(dreamText, lifeStatus, concern);
+                resultDiv.innerHTML = analysis;
+            }, 1500);
         }
 
-        function interpretDream() {
-            const dreamText = document.getElementById('dream-input').value;
-            if (!dreamText) return;
-            
-            const found = [];
+        function analyzeDream(dreamText, lifeStatus, concern) {
             const dreamLower = dreamText.toLowerCase();
+            const foundSymbols = [];
             
+            // Find all symbols
             for (const [key, data] of Object.entries(SYMBOLS)) {
-                for (const kw of data.keywords) {
-                    if (dreamLower.includes(kw.toLowerCase())) {
-                        if (!found.some(([k]) => k === key)) {
-                            found.push([key, data]);
+                const searchTerms = [key, data.en, ...(data.keywords || [])];
+                for (const term of searchTerms) {
+                    if (dreamLower.includes(term.toLowerCase())) {
+                        if (!foundSymbols.some(([k]) => k === key)) {
+                            foundSymbols.push([key, data]);
                         }
                         break;
                     }
                 }
             }
             
-            const resultDiv = document.getElementById('result');
+            // Determine overall fortune
+            let fortuneLevel = 'neutral';
+            let fortuneText = '中性梦境';
+            let fortuneEmoji = '🌙';
             
-            let html = `<h3>🔮 解梦分析</h3>`;
-            html += `<p style="color:#888;margin:10px 0;">「${dreamText.substring(0, 100)}${dreamText.length > 100 ? '...' : ''}」</p>`;
+            const fortuneCounts = { great: 0, good: 0, neutral: 0, caution: 0, mixed: 0 };
+            foundSymbols.forEach(([_, data]) => fortuneCounts[data.fortune]++);
             
-            if (found.length === 0) {
-                html += `
-                    <div class="symbol-card">
-                        <p>未识别到特定符号，但每个梦都有意义。</p>
-                        <p>思考一下：梦中的情绪是什么？这可能反映了你当前的生活状态。</p>
-                    </div>
-                `;
-            } else {
-                html += found.map(([k, d]) => renderSymbolCard(k, d)).join('');
-                
-                // Overall assessment
-                const hasGreat = found.some(([_, d]) => d.fortune === 'great');
-                const goodCount = found.filter(([_, d]) => ['great', 'good'].includes(d.fortune)).length;
-                const cautionCount = found.filter(([_, d]) => d.fortune === 'caution').length;
-                
-                let overall = '';
-                if (hasGreat) {
-                    overall = '🌟 大吉之梦！好运将至！';
-                } else if (goodCount > cautionCount) {
-                    overall = '✨ 整体吉利，有好的征兆。';
-                } else if (cautionCount > 0) {
-                    overall = '⚠️ 部分元素需要注意，保持警觉。';
-                } else {
-                    overall = '🌓 梦境较为中性，需结合具体情况分析。';
-                }
-                
-                html += `
-                    <div class="overall">
-                        <h3>📊 综合评估</h3>
-                        <p>${overall}</p>
-                    </div>
-                `;
+            if (fortuneCounts.great > 0) {
+                fortuneLevel = 'great';
+                fortuneText = '🌟 大吉大利！';
+                fortuneEmoji = '🌟🌟🌟';
+            } else if (fortuneCounts.good > fortuneCounts.caution) {
+                fortuneLevel = 'good';
+                fortuneText = '✨ 吉祥如意';
+                fortuneEmoji = '🌟🌟';
+            } else if (fortuneCounts.caution > 0) {
+                fortuneLevel = 'caution';
+                fortuneText = '⚠️ 需要留意';
+                fortuneEmoji = '⚠️';
             }
             
-            html += `<div class="tip">周公解梦常用「反梦」逻辑 — 梦里越可怕，现实反而越好！</div>`;
+            // Check for combinations
+            const comboMessages = [];
+            for (const [combo, message] of Object.entries(COMBINATIONS)) {
+                const [sym1, sym2] = combo.split('+');
+                if (foundSymbols.some(([k]) => k === sym1) && foundSymbols.some(([k]) => k === sym2)) {
+                    comboMessages.push(message);
+                }
+            }
             
-            resultDiv.innerHTML = html;
-            resultDiv.classList.add('show');
-        }
-
-        function randomSymbol() {
-            const keys = Object.keys(SYMBOLS);
-            const randomKey = keys[Math.floor(Math.random() * keys.length)];
-            const data = SYMBOLS[randomKey];
+            // Build narrative
+            let narrative = generateNarrative(dreamText, foundSymbols, lifeStatus, concern, comboMessages);
             
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `<h3>🎲 随机解梦智慧</h3>` + renderSymbolCard(randomKey, data);
-            resultDiv.classList.add('show');
+            // Build HTML
+            let html = `<h2>🔮 深度解梦分析</h2>`;
+            
+            // Fortune banner
+            html += `<div class="fortune-banner ${fortuneLevel}">
+                ${fortuneEmoji} ${fortuneText}
+            </div>`;
+            
+            // Original dream
+            html += `<h3>📖 你的梦境</h3>
+                <p style="color:#aaa;font-style:italic;">"${dreamText}"</p>`;
+            
+            // Main narrative
+            html += `<h3>🌙 解梦解读</h3>
+                <div class="narrative">${narrative}</div>`;
+            
+            // Found symbols
+            if (foundSymbols.length > 0) {
+                html += `<h3>🎴 梦中出现的符号</h3><div>`;
+                foundSymbols.forEach(([key, data]) => {
+                    html += `<span class="symbol-tag ${data.fortune}">${data.emoji} ${key}</span>`;
+                });
+                html += `</div>`;
+                
+                // Detailed symbols
+                html += `<h3>📚 符号详解</h3>`;
+                foundSymbols.forEach(([key, data]) => {
+                    html += `
+                        <div style="margin:15px 0;padding:20px;background:rgba(255,255,255,0.05);border-radius:15px;">
+                            <h4 style="color:#f9d423;">${data.emoji} ${key} (${data.en})</h4>
+                            <p style="margin:10px 0;"><strong>周公解梦：</strong>${data.positive}</p>
+                            <p style="margin:10px 0;"><strong>心理解读：</strong>${data.psychology}</p>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Combination bonus
+            if (comboMessages.length > 0) {
+                html += `<h3>⚡ 符号组合加成</h3>`;
+                comboMessages.forEach(msg => {
+                    html += `<div class="advice-box"><p>${msg}</p></div>`;
+                });
+            }
+            
+            // Life context
+            if (lifeStatus && LIFE_CONTEXT[lifeStatus]) {
+                html += `<h3>🎯 结合你的生活状态</h3>
+                    <div class="advice-box"><p>${LIFE_CONTEXT[lifeStatus]}</p></div>`;
+            }
+            
+            // Practical advice
+            html += `<h3>💡 实用建议</h3>
+                <div class="advice-box">
+                    <h4>根据这个梦，旺旺建议你：</h4>
+                    <ul style="margin:10px 0 0 20px;">
+                        ${generateAdvice(foundSymbols, fortuneLevel)}
+                    </ul>
+                </div>`;
+            
+            // Disclaimer
+            html += `<p style="text-align:center;color:#666;margin-top:30px;font-size:0.9rem;">
+                🌙 以上解读结合周公解梦与现代心理学，仅供参考娱乐<br>
+                重要决定请理性思考，相信自己的判断 ✨
+            </p>`;
+            
+            return html;
         }
 
-        function renderSymbolsList() {
-            const grid = document.getElementById('symbols-grid');
-            grid.innerHTML = Object.entries(SYMBOLS).map(([key, data]) => `
-                <button class="symbol-btn" onclick="showSymbol('${key}')">
-                    <span class="emoji">${data.emoji}</span>
-                    ${key}
-                </button>
-            `).join('');
+        function generateNarrative(dreamText, symbols, lifeStatus, concern, combos) {
+            if (symbols.length === 0) {
+                return `你的梦境中没有匹配到常见的符号，但每个梦都有其独特的意义。<br><br>
+                    从心理学角度来看，梦境往往反映了我们白天的思绪和潜意识的运作。
+                    即使没有具体的符号，梦中的情绪和氛围也很重要。<br><br>
+                    你在梦中感受到什么样的情绪？是轻松愉快，还是紧张焦虑？
+                    这些情绪往往比具体的符号更能反映你当前的内心状态。`;
+            }
+            
+            let narrative = '';
+            
+            // Opening based on fortune
+            const hasGreat = symbols.some(([_, d]) => d.fortune === 'great');
+            const hasGood = symbols.some(([_, d]) => d.fortune === 'good');
+            const hasCaution = symbols.some(([_, d]) => d.fortune === 'caution');
+            
+            if (hasGreat) {
+                narrative += `<strong>这是一个非常吉祥的梦境！</strong><br><br>`;
+            } else if (hasGood && !hasCaution) {
+                narrative += `<strong>这个梦整体来说是积极的，带有正面的预兆。</strong><br><br>`;
+            } else if (hasCaution) {
+                narrative += `<strong>这个梦境在提醒你一些需要注意的事情。</strong><br><br>`;
+            } else {
+                narrative += `<strong>这是一个意味深长的梦境。</strong><br><br>`;
+            }
+            
+            // Main interpretation
+            narrative += `在你的梦中，`;
+            
+            const symbolDescs = symbols.map(([key, data]) => {
+                return `${data.emoji}<strong>${key}</strong>`;
+            });
+            
+            if (symbolDescs.length === 1) {
+                narrative += `出现了${symbolDescs[0]}。`;
+            } else if (symbolDescs.length === 2) {
+                narrative += `出现了${symbolDescs[0]}和${symbolDescs[1]}。`;
+            } else {
+                narrative += `出现了${symbolDescs.slice(0, -1).join('、')}和${symbolDescs.slice(-1)}。`;
+            }
+            
+            narrative += `<br><br>`;
+            
+            // Symbol explanations
+            symbols.forEach(([key, data], idx) => {
+                if (idx === 0) {
+                    narrative += `${data.emoji} <strong>${key}</strong>在周公解梦中${data.positive} `;
+                } else {
+                    narrative += `<br><br>${data.emoji} 而<strong>${key}</strong>则${data.positive.charAt(0).toLowerCase()}${data.positive.slice(1)} `;
+                }
+            });
+            
+            // Combos
+            if (combos.length > 0) {
+                narrative += `<br><br>特别值得注意的是，`;
+                narrative += combos.join(' ');
+            }
+            
+            // Concern connection
+            if (concern) {
+                narrative += `<br><br>你提到最近关心「${concern}」，这个梦可能与此有关。`;
+                if (hasGreat || hasGood) {
+                    narrative += `梦境的积极信号可能预示着这方面会有好的发展。`;
+                } else if (hasCaution) {
+                    narrative += `这个梦可能在提醒你在这方面需要更加谨慎。`;
+                }
+            }
+            
+            // Psychology angle
+            narrative += `<br><br>从心理学角度来看，`;
+            const psychSymbol = symbols[0];
+            narrative += `${psychSymbol[1].psychology}`;
+            
+            return narrative;
         }
 
-        function showSymbol(key) {
-            const data = SYMBOLS[key];
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = renderSymbolCard(key, data);
-            resultDiv.classList.add('show');
+        function generateAdvice(symbols, fortuneLevel) {
+            const adviceList = [];
+            
+            // Base advice from symbols
+            symbols.slice(0, 3).forEach(([key, data]) => {
+                if (data.advice) {
+                    adviceList.push(`<li>${data.advice}</li>`);
+                }
+            });
+            
+            // Fortune-based advice
+            if (fortuneLevel === 'great') {
+                adviceList.push(`<li>好运来临！最近可以积极行动，把握机会。</li>`);
+            } else if (fortuneLevel === 'good') {
+                adviceList.push(`<li>保持积极乐观的心态，好事会自然来临。</li>`);
+            } else if (fortuneLevel === 'caution') {
+                adviceList.push(`<li>多加留意周围的人和事，谨慎做决定。</li>`);
+            }
+            
+            // Generic advice
+            adviceList.push(`<li>记录下这个梦，看看未来是否会应验。</li>`);
+            
+            return adviceList.join('');
         }
-
-        // Enter key support
-        document.getElementById('dream-input').addEventListener('keydown', e => {
-            if (e.key === 'Enter' && e.ctrlKey) interpretDream();
-        });
-        document.getElementById('symbol-input').addEventListener('keydown', e => {
-            if (e.key === 'Enter') lookupSymbol();
-        });
     </script>
 </body>
 </html>
