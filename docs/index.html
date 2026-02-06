@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌙 Dream Decoder 解梦大师</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f9d423, #ff4e50);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1rem;
+        }
+        
+        .search-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 10px;
+            color: #e8e8e8;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover, .tab.active {
+            background: rgba(249, 212, 35, 0.3);
+        }
+        
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus, textarea:focus {
+            border-color: #f9d423;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button.primary {
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            background: linear-gradient(90deg, #f9d423, #ff4e50);
+            border: none;
+            border-radius: 15px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(249, 212, 35, 0.3);
+        }
+        
+        .result {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .symbol-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .symbol-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .symbol-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .fortune {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .fortune.great { background: linear-gradient(90deg, #f9d423, #ff4e50); }
+        .fortune.good { background: rgba(76, 175, 80, 0.5); }
+        .fortune.neutral { background: rgba(158, 158, 158, 0.5); }
+        .fortune.caution { background: rgba(255, 152, 0, 0.5); }
+        .fortune.mixed { background: rgba(156, 39, 176, 0.5); }
+        
+        .interpretation {
+            margin: 10px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            border-left: 3px solid #f9d423;
+        }
+        
+        .interpretation h4 {
+            color: #f9d423;
+            margin-bottom: 8px;
+        }
+        
+        .overall {
+            text-align: center;
+            padding: 20px;
+            background: rgba(249, 212, 35, 0.1);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .overall h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .symbols-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .symbol-btn {
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 10px;
+            color: #e8e8e8;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .symbol-btn:hover {
+            background: rgba(249, 212, 35, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .symbol-btn .emoji {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        footer a {
+            color: #f9d423;
+            text-decoration: none;
+        }
+        
+        .tip {
+            background: rgba(249, 212, 35, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .tip::before {
+            content: "💡 ";
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .tabs { flex-wrap: wrap; }
+            .tab { flex: 1; text-align: center; min-width: 80px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌙 Dream Decoder 解梦大师</h1>
+            <p class="subtitle">周公解梦 × 现代心理学</p>
+        </header>
+        
+        <div class="search-box">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('interpret')">🔮 解梦</button>
+                <button class="tab" onclick="switchTab('lookup')">🔍 查符号</button>
+                <button class="tab" onclick="switchTab('random')">🎲 随机</button>
+                <button class="tab" onclick="switchTab('list')">📚 符号表</button>
+            </div>
+            
+            <div id="interpret-panel">
+                <textarea id="dream-input" placeholder="描述你的梦境... (中英文皆可)&#10;例如：我梦到在天上飞，看到了龙"></textarea>
+                <button class="primary" onclick="interpretDream()">🔮 解梦</button>
+            </div>
+            
+            <div id="lookup-panel" style="display:none">
+                <input type="text" id="symbol-input" placeholder="输入符号 (如: 蛇, snake, 棺材, flying)">
+                <button class="primary" onclick="lookupSymbol()">🔍 查询</button>
+            </div>
+            
+            <div id="random-panel" style="display:none">
+                <button class="primary" onclick="randomSymbol()">🎲 随机解梦智慧</button>
+            </div>
+            
+            <div id="list-panel" style="display:none">
+                <div class="symbols-grid" id="symbols-grid"></div>
+            </div>
+        </div>
+        
+        <div class="result" id="result"></div>
+        
+        <footer>
+            Made with 💜 by <a href="https://github.com/wond3v/dream-decoder">旺旺 (Nova)</a> 🐕
+            <br><small>⚠️ 仅供娱乐参考</small>
+        </footer>
+    </div>
+
+    <script>
+        // Dream Symbols Database
+        const SYMBOLS = {
+            "蛇": {
+                en: "snake", emoji: "🐍", category: "动物",
+                traditional: "蛇为小龙，梦蛇多主财运、智慧。被蛇咬则可能有小人。",
+                modern: "May represent hidden fears, transformation, or temptation.",
+                fortune: "mixed", fortuneText: "吉凶参半",
+                keywords: ["snake", "serpent", "蛇"]
+            },
+            "狗": {
+                en: "dog", emoji: "🐕", category: "动物",
+                traditional: "狗为忠诚之兽，梦狗主朋友、忠诚。狗咬人则可能有口舌之争。",
+                modern: "Represents loyalty, friendship, or protection instincts.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["dog", "puppy", "狗", "犬"]
+            },
+            "龙": {
+                en: "dragon", emoji: "🐉", category: "动物",
+                traditional: "龙为帝王之象，大吉！主事业腾飞、贵人相助。",
+                modern: "Symbol of power, success, and ambition.",
+                fortune: "great", fortuneText: "大吉",
+                keywords: ["dragon", "龙"]
+            },
+            "猫": {
+                en: "cat", emoji: "🐱", category: "动物",
+                traditional: "猫主独立、神秘。梦猫可能有女性贵人，或需防小人。",
+                modern: "Independence, intuition, feminine energy.",
+                fortune: "neutral", fortuneText: "中",
+                keywords: ["cat", "kitten", "猫"]
+            },
+            "鱼": {
+                en: "fish", emoji: "🐟", category: "动物",
+                traditional: "鱼通'余'，年年有余！梦鱼主财运、富足。",
+                modern: "Abundance, fertility, the unconscious mind.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["fish", "鱼"]
+            },
+            "鸟": {
+                en: "bird", emoji: "🐦", category: "动物",
+                traditional: "鸟主自由、消息。梦鸟飞主好消息将至。",
+                modern: "Freedom, perspective, messages from the subconscious.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["bird", "鸟"]
+            },
+            "水": {
+                en: "water", emoji: "💧", category: "自然",
+                traditional: "水主财。清水为财运，浑水需谨慎。大水/洪水主大变动。",
+                modern: "Emotions, the unconscious, cleansing or overwhelm.",
+                fortune: "mixed", fortuneText: "视情况",
+                keywords: ["water", "river", "ocean", "水", "河", "海"]
+            },
+            "火": {
+                en: "fire", emoji: "🔥", category: "自然",
+                traditional: "火主兴旺。梦火烧主事业红火，但需防冲动。",
+                modern: "Passion, transformation, anger, or creativity.",
+                fortune: "mixed", fortuneText: "吉凶参半",
+                keywords: ["fire", "flame", "火", "焰"]
+            },
+            "山": {
+                en: "mountain", emoji: "⛰️", category: "自然",
+                traditional: "山主稳重、障碍。爬山成功主克服困难。",
+                modern: "Challenges, goals, stability, obstacles to overcome.",
+                fortune: "neutral", fortuneText: "中",
+                keywords: ["mountain", "hill", "山"]
+            },
+            "雨": {
+                en: "rain", emoji: "🌧️", category: "自然",
+                traditional: "雨主恩泽、润泽。梦雨多为吉兆，滋润万物。",
+                modern: "Cleansing, renewal, sadness, or fertility.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["rain", "雨"]
+            },
+            "死人": {
+                en: "dead person", emoji: "💀", category: "人物",
+                traditional: "梦见死人反为吉！主长寿、旧事了结。死去的亲人托梦要注意。",
+                modern: "Endings, transformation, unresolved feelings about the person.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["dead", "death", "deceased", "死", "亡"]
+            },
+            "婴儿": {
+                en: "baby", emoji: "👶", category: "人物",
+                traditional: "婴儿主新生、希望。梦婴儿主新开始或好消息。",
+                modern: "New beginnings, innocence, vulnerability, new projects.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["baby", "infant", "婴儿", "宝宝"]
+            },
+            "棺材": {
+                en: "coffin", emoji: "⚰️", category: "物品",
+                traditional: "大吉！棺材 = 官财（升官发财）。棺材入宅主财运进门。",
+                modern: "Endings leading to new beginnings, transformation.",
+                fortune: "great", fortuneText: "大吉",
+                keywords: ["coffin", "棺材", "棺"]
+            },
+            "钱": {
+                en: "money", emoji: "💰", category: "物品",
+                traditional: "梦钱不一定主财。捡钱可能漏财，丢钱反而可能得财。",
+                modern: "Self-worth, power, anxiety about resources.",
+                fortune: "mixed", fortuneText: "视情况",
+                keywords: ["money", "cash", "钱", "金钱"]
+            },
+            "房子": {
+                en: "house", emoji: "🏠", category: "物品",
+                traditional: "房子主自身。新房主新生活，旧房主怀旧或需改变。",
+                modern: "The self, security, family, different rooms = different aspects of psyche.",
+                fortune: "neutral", fortuneText: "中",
+                keywords: ["house", "home", "房子", "房", "屋"]
+            },
+            "车": {
+                en: "car", emoji: "🚗", category: "物品",
+                traditional: "车主前进、事业。开车顺利主事业顺遂。",
+                modern: "Life direction, control, ambition, journey.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["car", "vehicle", "车"]
+            },
+            "飞": {
+                en: "flying", emoji: "🕊️", category: "动作",
+                traditional: "飞主高升、自由。飞得高主志向远大，但需防骄傲。",
+                modern: "Freedom, escape, ambition, transcending limitations.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["fly", "flying", "飞", "飞翔"]
+            },
+            "掉牙": {
+                en: "losing teeth", emoji: "🦷", category: "动作",
+                traditional: "传统认为掉牙主亲人健康需注意。但也可能主蜕变。",
+                modern: "Anxiety about appearance, aging, loss of control, major life changes.",
+                fortune: "caution", fortuneText: "需注意",
+                keywords: ["teeth", "losing teeth", "tooth", "掉牙", "牙"]
+            },
+            "哭": {
+                en: "crying", emoji: "😢", category: "动作",
+                traditional: "梦哭反主喜！哭得越厉害，喜事越大。",
+                modern: "Emotional release, sadness, or joy in disguise.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["cry", "crying", "tears", "哭", "泪"]
+            },
+            "结婚": {
+                en: "wedding", emoji: "💒", category: "动作",
+                traditional: "梦结婚主人生新阶段、承诺。未婚者梦此可能有姻缘。",
+                modern: "Commitment, union of different aspects of self, new phase.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["wedding", "marriage", "marry", "结婚", "婚礼"]
+            },
+            "怀孕": {
+                en: "pregnancy", emoji: "🤰", category: "动作",
+                traditional: "怀孕主新生、创造。可能有新计划或创意。",
+                modern: "Creativity, new ideas, development, anticipation.",
+                fortune: "good", fortuneText: "吉",
+                keywords: ["pregnant", "pregnancy", "怀孕"]
+            },
+            "考试": {
+                en: "exam", emoji: "📝", category: "动作",
+                traditional: "考试主被评判、压力。考得好主顺利，考砸需自省。",
+                modern: "Fear of judgment, self-evaluation, imposter syndrome.",
+                fortune: "neutral", fortuneText: "中",
+                keywords: ["exam", "test", "考试", "测试"]
+            }
+        };
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('[id$="-panel"]').forEach(p => p.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + '-panel').style.display = 'block';
+            document.getElementById('result').classList.remove('show');
+            
+            if (tab === 'list') {
+                renderSymbolsList();
+            }
+        }
+
+        function searchSymbol(query) {
+            query = query.toLowerCase().trim();
+            const results = [];
+            
+            for (const [key, data] of Object.entries(SYMBOLS)) {
+                const keywords = data.keywords.map(k => k.toLowerCase());
+                if (keywords.includes(query) || key.toLowerCase() === query || data.en.toLowerCase() === query) {
+                    results.push([key, data]);
+                }
+            }
+            
+            if (results.length === 0) {
+                for (const [key, data] of Object.entries(SYMBOLS)) {
+                    const keywordStr = data.keywords.join(' ').toLowerCase();
+                    if (keywordStr.includes(query) || key.includes(query) || data.en.toLowerCase().includes(query)) {
+                        results.push([key, data]);
+                    }
+                }
+            }
+            
+            return results;
+        }
+
+        function renderSymbolCard(key, data) {
+            return `
+                <div class="symbol-card">
+                    <div class="symbol-header">
+                        <span class="symbol-name">${data.emoji} ${key} (${data.en})</span>
+                        <span class="fortune ${data.fortune}">${data.fortuneText}</span>
+                    </div>
+                    <div class="interpretation">
+                        <h4>📜 周公解梦</h4>
+                        <p>${data.traditional}</p>
+                    </div>
+                    <div class="interpretation">
+                        <h4>🧠 现代解读</h4>
+                        <p>${data.modern}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function lookupSymbol() {
+            const query = document.getElementById('symbol-input').value;
+            if (!query) return;
+            
+            const results = searchSymbol(query);
+            const resultDiv = document.getElementById('result');
+            
+            if (results.length === 0) {
+                resultDiv.innerHTML = `
+                    <h3>❌ 未找到「${query}」</h3>
+                    <p>试试: 蛇, 狗, 水, 飞, 棺材, snake, flying, etc.</p>
+                `;
+            } else {
+                resultDiv.innerHTML = results.map(([k, d]) => renderSymbolCard(k, d)).join('');
+            }
+            
+            resultDiv.classList.add('show');
+        }
+
+        function interpretDream() {
+            const dreamText = document.getElementById('dream-input').value;
+            if (!dreamText) return;
+            
+            const found = [];
+            const dreamLower = dreamText.toLowerCase();
+            
+            for (const [key, data] of Object.entries(SYMBOLS)) {
+                for (const kw of data.keywords) {
+                    if (dreamLower.includes(kw.toLowerCase())) {
+                        if (!found.some(([k]) => k === key)) {
+                            found.push([key, data]);
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            const resultDiv = document.getElementById('result');
+            
+            let html = `<h3>🔮 解梦分析</h3>`;
+            html += `<p style="color:#888;margin:10px 0;">「${dreamText.substring(0, 100)}${dreamText.length > 100 ? '...' : ''}」</p>`;
+            
+            if (found.length === 0) {
+                html += `
+                    <div class="symbol-card">
+                        <p>未识别到特定符号，但每个梦都有意义。</p>
+                        <p>思考一下：梦中的情绪是什么？这可能反映了你当前的生活状态。</p>
+                    </div>
+                `;
+            } else {
+                html += found.map(([k, d]) => renderSymbolCard(k, d)).join('');
+                
+                // Overall assessment
+                const hasGreat = found.some(([_, d]) => d.fortune === 'great');
+                const goodCount = found.filter(([_, d]) => ['great', 'good'].includes(d.fortune)).length;
+                const cautionCount = found.filter(([_, d]) => d.fortune === 'caution').length;
+                
+                let overall = '';
+                if (hasGreat) {
+                    overall = '🌟 大吉之梦！好运将至！';
+                } else if (goodCount > cautionCount) {
+                    overall = '✨ 整体吉利，有好的征兆。';
+                } else if (cautionCount > 0) {
+                    overall = '⚠️ 部分元素需要注意，保持警觉。';
+                } else {
+                    overall = '🌓 梦境较为中性，需结合具体情况分析。';
+                }
+                
+                html += `
+                    <div class="overall">
+                        <h3>📊 综合评估</h3>
+                        <p>${overall}</p>
+                    </div>
+                `;
+            }
+            
+            html += `<div class="tip">周公解梦常用「反梦」逻辑 — 梦里越可怕，现实反而越好！</div>`;
+            
+            resultDiv.innerHTML = html;
+            resultDiv.classList.add('show');
+        }
+
+        function randomSymbol() {
+            const keys = Object.keys(SYMBOLS);
+            const randomKey = keys[Math.floor(Math.random() * keys.length)];
+            const data = SYMBOLS[randomKey];
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<h3>🎲 随机解梦智慧</h3>` + renderSymbolCard(randomKey, data);
+            resultDiv.classList.add('show');
+        }
+
+        function renderSymbolsList() {
+            const grid = document.getElementById('symbols-grid');
+            grid.innerHTML = Object.entries(SYMBOLS).map(([key, data]) => `
+                <button class="symbol-btn" onclick="showSymbol('${key}')">
+                    <span class="emoji">${data.emoji}</span>
+                    ${key}
+                </button>
+            `).join('');
+        }
+
+        function showSymbol(key) {
+            const data = SYMBOLS[key];
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = renderSymbolCard(key, data);
+            resultDiv.classList.add('show');
+        }
+
+        // Enter key support
+        document.getElementById('dream-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && e.ctrlKey) interpretDream();
+        });
+        document.getElementById('symbol-input').addEventListener('keydown', e => {
+            if (e.key === 'Enter') lookupSymbol();
+        });
+    </script>
+</body>
+</html>
